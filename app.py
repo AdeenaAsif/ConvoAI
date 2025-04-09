@@ -36,10 +36,6 @@ def get_text_chunks(text):
     chunks=text_splitter.split_text(text)
     return chunks
 def get_vectorstore(text_chunks):
-    # if os.getenv("HUGGINGFACEHUB_API_TOKEN") is None:
-    #     st.error("OpenAI API key not found. Please check your .env file.")
-    #     st.stop()
-    # #embeddings= OpenAIEmbeddings()
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
     google_api_key=os.getenv("GOOGLE_API_KEY")
     #embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -51,9 +47,8 @@ def get_conversation_chain(vectorstore):
     try:
         llm = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash",
-            #google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.3,
-            #convert_system_message_to_human=True
+            
         )
         memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
         conversation_chain = ConversationalRetrievalChain.from_llm(
@@ -142,7 +137,5 @@ def main():
     user_question=st.text_input('Ask a question about your PDF',placeholder="Type here...")
     if user_question:
         handle_userinput(user_question)
-    #st.write(user_template.replace("{{MSG}}","Hello Bot"),unsafe_allow_html=True)
-    #st.write(bot_template.replace("{{MSG}}","Hello Human"),unsafe_allow_html=True)
 if __name__=='__main__':
     main()
